@@ -1,33 +1,17 @@
-
-def main():
-    vacancies_json = []
-    keyword = input('Введите ключевое слово для поиска: ')
-    #keyword = 'Python'
-    num_pages = input('Введите количество страниц для поиска: ')
-
-    # Создание экземпляра класса для работы с API сайтов с вакансиями
-    hh_api = HeadHunterAPI(keyword)
-
-    for api in (hh_api):
-        api.get_vacancies(pages_count=int(num_pages))
-        vacancies_json.extend(api.get_formatted_vacancies())
-
-    connector = Connector(keyword=keyword, vacancies_json=vacancies_json)
-
-    while True:
-        command = input(
-            "1 - вывести список вакансий;\n"
-            "exit - для выхода.\n"
-        )
-        if command.lower() == 'exit':
-            break
-        elif command == '1':
-            vacancies = connector.select()
-
-        for vacancy in vacancies:
-            print(vacancy, end='\n\n')
+from hh_parser import HeadHunter
+from db_manager import DBManager
 
 
-if __name__ == '__main__':
-    main()
+#database = input('Введите название базы данных: ')
+#password = input('Введите пароль: ')
 
+database = "headhunter"
+password = "229"
+
+#Парсинг нанимателей и вакансий с сайта HeadHunter
+hh = HeadHunter()
+hh.get_employers()
+hh.get_vacancies()
+
+#Подключение, создание баз данных, таблиц companies и vacancies
+db = DBManager(host="localhost", database=database.lower(), user="postgres", password=password)
